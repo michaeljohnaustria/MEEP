@@ -8,11 +8,6 @@ from django import forms
 from django.contrib.auth.models import User
 
 
-from yourapp.models import Meep
-from yourapp.forms import YourForm
-from path.to.your.seekpaginator import SeekPaginator, EmptyPage
-
-
 def home(request):
     if request.user.is_authenticated:
         form = MeepForm(request.POST or None)
@@ -279,24 +274,5 @@ def search_user(request):
         return render(request, 'search_user.html', {})
     
 
-
-  # Adjust the import path accordingly
-
-def meep_list_view(request):
-    per_page = 10  # Number of meeps per page
-    lookup_field = ('created_at',)  # Field to look up for pagination
-
-    meeps = Meep.objects.all()
-    paginator = SeekPaginator(query_set=meeps, per_page=per_page, lookup_field=lookup_field)
-    
-    value = request.GET.get('value', None)
-    pk = request.GET.get('pk', None)
-    move_to = SeekPaginator.NEXT_PAGE if request.GET.get('direction') == 'next' else SeekPaginator.PREV_PAGE
-
-    try:
-        page = paginator.page(value=value, pk=pk, move_to=move_to)
-    except EmptyPage:
-        # Handle the empty page exception, perhaps by redirecting to the first page
-        return redirect(request.path + '?value=&pk=')
     
     return render(request, 'your_template_name.html', {'meeps': page.object_list, 'form': YourForm(), 'value': value, 'pk': pk})
